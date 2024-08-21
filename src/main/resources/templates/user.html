@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль пользователя</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1 class="text-center mb-4">Профиль пользователя</h1>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Информация о пользователе</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Имя пользователя:</strong>
+                            <span th:text="${#authentication.name}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Имя:</strong>
+                            <span th:text="${#authentication.principal.name}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Фамилия:</strong>
+                            <span th:text="${#authentication.principal.lastname}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Email:</strong>
+                            <span th:text="${#authentication.principal.email}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Возраст:</strong>
+                            <span th:text="${#authentication.principal.age}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Роли:</strong>
+                            <span th:text="${#authentication.authorities}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <a href="/" class="btn btn-primary">На главную</a>
+                <form th:action="@{/logout}" method="post" style="display: inline-block;">
+                    <button type="submit" class="btn btn-danger">Выйти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

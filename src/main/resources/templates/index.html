@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="jumbotron">
+        <h1 class="display-4">Добро пожаловать!</h1>
+        <p class="lead">Это главная страница вашего приложения.</p>
+        <hr class="my-4">
+        <div sec:authorize="isAuthenticated()">
+            <p>Вы вошли как: <span sec:authentication="name"></span></p>
+            <p>Роли: <span sec:authentication="principal.authorities"></span></p>
+        </div>
+        <div sec:authorize="!isAuthenticated()">
+            <p>Вы не авторизованы. Пожалуйста, войдите в систему.</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Действия</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" sec:authorize="hasRole('ADMIN')">
+                            <a href="/admin" class="btn btn-primary btn-block">Панель администратора</a>
+                        </li>
+                        <li class="list-group-item" sec:authorize="hasRole('USER')">
+                            <a href="/user" class="btn btn-info btn-block">Личный кабинет</a>
+                        </li>
+                        <li class="list-group-item" sec:authorize="!isAuthenticated()">
+                            <a href="/login" class="btn btn-success btn-block">Войти</a>
+                        </li>
+                        <li class="list-group-item" sec:authorize="isAuthenticated()">
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="btn btn-danger btn-block">Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

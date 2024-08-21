@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация о пользователе</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="text-center mb-4">Информация о пользователе</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 th:text="${user.username}" class="mb-0"></h2>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>ID:</th>
+                            <td th:text="${user.id}"></td>
+                        </tr>
+                        <tr>
+                            <th>Имя:</th>
+                            <td th:text="${user.name}"></td>
+                        </tr>
+                        <tr>
+                            <th>Фамилия:</th>
+                            <td th:text="${user.lastname}"></td>
+                        </tr>
+                        <tr>
+                            <th>Возраст:</th>
+                            <td th:text="${user.age}"></td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td th:text="${user.email}"></td>
+                        </tr>
+                        <tr>
+                            <th>Роли:</th>
+                            <td>
+                                <ul class="list-unstyled mb-0">
+                                    <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <a href="/admin" class="btn btn-primary" sec:authorize="hasRole('ADMIN')">Вернуться к списку пользователей</a>
+                <a href="/" class="btn btn-secondary">На главную</a>
+                <form th:action="@{/logout}" method="post" style="display: inline-block;">
+                    <button type="submit" class="btn btn-danger">Выйти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

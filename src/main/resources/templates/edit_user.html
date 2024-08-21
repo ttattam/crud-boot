@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать пользователя</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Редактировать пользователя</h1>
+    <form id="editUserForm">
+        <input type="hidden" id="userId" name="id">
+        <div class="form-group">
+            <label for="username">Имя пользователя</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="name">Имя</label>
+            <input type="text" class="form-control" id="name" name="name">
+        </div>
+        <div class="form-group">
+            <label for="lastname">Фамилия</label>
+            <input type="text" class="form-control" id="lastname" name="lastname">
+        </div>
+        <div class="form-group">
+            <label for="age">Возраст</label>
+            <input type="number" class="form-control" id="age" name="age" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Новый пароль (оставьте пустым, если не хотите менять)</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="form-group">
+            <label>Роли</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="roles" value="USER" id="roleUser">
+                <label class="form-check-label" for="roleUser">
+                    Пользователь
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="roles" value="ADMIN" id="roleAdmin">
+                <label class="form-check-label" for="roleAdmin">
+                    Администратор
+                </label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+    </form>
+    <a href="/admin" class="btn btn-secondary mt-3">Вернуться к списку пользователей</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userId = new URLSearchParams(window.location.search).get('id');
+        if (userId) {
+            loadUserData(userId);
+        }
+    });
+
+    async function loadUserData(userId) {
+        try {
+            const response = await fetch(`/admin/edit/${userId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const user = await response.json();
+            fillForm(user);
+        } catch (error) {
+            console.error('Error loading user data:', error);
+            alert('Ошибка при загрузке данных пользователя');
+        }
+    }
+
+    function fillForm(user) {
+        document.getElementById('userId').value = user.id;
+        document.getElementById('username').value = user.username;
+        document.getElementById('name').value = user.name || '';
+        document.getElementById('lastname').value = user.lastname || '';
+        document.getElementById('age').value = user.age;
+        document.getElementById('email').value = user.email;
+        document.getElementById('roleUser').checked = user.roles.some(role => role.name === 'USER');
+        document.getElementById('roleAdmin').checked = user.roles.some(role => role.name === 'ADMIN');
+    }
+
+    document.getElementById('editUserForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch('/admin/edit', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            alert('Пользователь успешно обновлен');
+            window.location.href = '/admin';
+        } catch (error) {
+            console.error('Error updating user:', error);
+            alert('Ошибка при обновлении пользователя');
+        }
+    });
+</script>
+</body>
+</html>

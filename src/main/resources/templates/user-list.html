@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список пользователей</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Список пользователей</h1>
+        <div>
+            <button class="btn btn-success" data-toggle="modal" data-target="#createUserModal">Создать пользователя</button>
+            <a href="/" class="btn btn-secondary">На главную</a>
+            <form th:action="@{/logout}" method="post" style="display: inline-block;">
+                <button type="submit" class="btn btn-danger">Выйти</button>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя пользователя</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Возраст</th>
+            <th>Email</th>
+            <th>Роли</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody id="userTableBody">
+        <!-- Данные будут загружены с помощью JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Модальное окно для создания пользователя -->
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel">Создать нового пользователя</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createUserForm">
+                    <div class="form-group">
+                        <label for="username">Имя пользователя</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Имя</label>
+                        <input type="text" class="form-control" id="name" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Фамилия</label>
+                        <input type="text" class="form-control" id="lastname" name="lastname">
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Возраст</label>
+                        <input type="number" class="form-control" id="age" name="age" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Роли</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="roles" value="USER" id="roleUser">
+                            <label class="form-check-label" for="roleUser">Пользователь</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="roles" value="ADMIN" id="roleAdmin">
+                            <label class="form-check-label" for="roleAdmin">Администратор</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" id="submitCreateUser">Создать</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования пользователя -->
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Редактировать пользователя</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId" name="id">
+                    <div class="form-group">
+                        <label for="editUsername">Имя пользователя</label>
+                        <input type="text" class="form-control" id="editUsername" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editName">Имя</label>
+                        <input type="text" class="form-control" id="editName" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="editLastname">Фамилия</label>
+                        <input type="text" class="form-control" id="editLastname" name="lastname">
+                    </div>
+                    <div class="form-group">
+                        <label for="editAge">Возраст</label>
+                        <input type="number" class="form-control" id="editAge" name="age" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" class="form-control" id="editEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPassword">Новый пароль (оставьте пустым, если не хотите менять)</label>
+                        <input type="password" class="form-control" id="editPassword" name="password">
+                    </div>
+                    <div class="form-group">
+                        <label>Роли</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="roles" value="USER" id="editRoleUser">
+                            <label class="form-check-label" for="editRoleUser">Пользователь</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="roles" value="ADMIN" id="editRoleAdmin">
+                            <label class="form-check-label" for="editRoleAdmin">Администратор</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" id="submitEditUser">Сохранить изменения</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    // Загрузка пользователей при загрузке страницы
+    document.addEventListener('DOMContentLoaded', loadUsers);
+
+    // Функция для загрузки пользователей
+    async function loadUsers() {
+        try {
+            const response = await fetch('/admin/users');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const users = await response.json();
+            displayUsers(users);
+        } catch (error) {
+            console.error('Error loading users:', error);
+            alert('Ошибка при загрузке пользователей');
+        }
+    }
+
+    // Функция для отображения пользователей
+    function displayUsers(users) {
+        const tableBody = document.getElementById('userTableBody');
+        tableBody.innerHTML = '';
+        users.forEach(user => {
+            const row = `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.name || ''}</td>
+                        <td>${user.lastname || ''}</td>
+                        <td>${user.age}</td>
+                        <td>${user.email}</td>
+                        <td>${user.roles.map(role => role.name).join(', ')}</td>
+                        <td>
+                            <button onclick="editUser(${user.id})" class="btn btn-primary btn-sm">Редактировать</button>
+                            <button onclick="deleteUser(${user.id})" class="btn btn-danger btn-sm">Удалить</button>
+                        </td>
+                    </tr>
+                `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // Функция для создания пользователя
+    document.getElementById('submitCreateUser').addEventListener('click', async function() {
+        const form = document.getElementById('createUserForm');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('/admin', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            $('#createUserModal').modal('hide');
+            form.reset();
+            loadUsers();
+        } catch (error) {
+            console.error('Error creating user:', error);
+            alert('Ошибка при создании пользователя');
+        }
+    });
+
+    // Функция для загрузки данных пользователя для редактирования
+    async function editUser(id) {
+        try {
+            const response = await fetch(`/admin/edit/${id}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const user = await response.json();
+            fillEditForm(user);
+            $('#editUserModal').modal('show');
+        } catch (error) {
+            console.error('Error loading user for edit:', error);
+            alert('Ошибка при загрузке данных пользователя');
+        }
+    }
+
+    // Функция для заполнения формы редактирования
+    function fillEditForm(user) {
+        document.getElementById('editUserId').value = user.id;
+        document.getElementById('editUsername').value = user.username;
+        document.getElementById('editName').value = user.name || '';
+        document.getElementById('editLastname').value = user.lastname || '';
+        document.getElementById('editAge').value = user.age;
+        document.getElementById('editEmail').value = user.email;
+        document.getElementById('editPassword').value = '';
+        document.getElementById('editRoleUser').checked = user.roles.some(role => role.name === 'USER');
+        document.getElementById('editRoleAdmin').checked = user.roles.some(role => role.name === 'ADMIN');
+    }
+
+    // Функция для обновления пользователя
+    document.getElementById('submitEditUser').addEventListener('click', async function() {
+        const form = document.getElementById('editUserForm');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('/admin/edit', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            $('#editUserModal').modal('hide');
+            loadUsers();
+        } catch (error) {
+            console.error('Error updating user:', error);
+            alert('Ошибка при обновлении пользователя');
+        }
+    });
+
+    // Функция для удаления пользователя
+    async function deleteUser(id) {
+        if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
+            try {
+                const response = await fetch(`/admin/delete/${id}`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                loadUsers();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('Ошибка при удалении пользователя');
+            }
+        }
+    }
+</script>
+</body>
+</html>
